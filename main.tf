@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "ap-south-1"
+  # region = "ap-south-1"
+  region = "us-west-1"
 }
 
 resource "aws_key_pair" "shubhamtatvamasi" {
@@ -8,12 +9,13 @@ resource "aws_key_pair" "shubhamtatvamasi" {
 }
 
 resource "aws_spot_instance_request" "ec2-spot-arm" {
-  ami           = "ami-05eb7099cfe42bd06" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS
+  # ami           = "ami-05eb7099cfe42bd06" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - ap-south-1
+  ami           = "ami-00a0488e9d5582804" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - us-west-1
   instance_type = "t4g.xlarge"
   spot_type     = "one-time"
   key_name      = aws_key_pair.shubhamtatvamasi.key_name
-  subnet_id     = "subnet-19056462"
-  security_groups = ["sg-0b1fd5ccec31cb552", "sg-0525a9ccef62bba8d"]
+  # subnet_id     = "subnet-19056462"
+  # security_groups = ["sg-0b1fd5ccec31cb552", "sg-0525a9ccef62bba8d"]
 
   root_block_device {
     volume_size = "100"
@@ -21,6 +23,6 @@ resource "aws_spot_instance_request" "ec2-spot-arm" {
   }
 
   tags = {
-    Name = "ARM AGW 9"
+    Name = "ARM AGW 1"
   }
 }
