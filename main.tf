@@ -1,28 +1,52 @@
 provider "aws" {
-  # region = "ap-south-1"
-  region = "us-west-1"
+  region = "ap-south-1"
+  # region = "us-west-1"
 }
 
 resource "aws_key_pair" "shubhamtatvamasi" {
   key_name   = "shubhamtatvamasi-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCgZIy4AZkZPaAHaZvhC7h3kM83UqqGXywD/IofvebxIPe77fkLjETHkWnJD29+IXfhjPSTO3ODik7dys1NrIgSkSUF1bGpVcCeA7Q2OUA1cnpjnHyBcEUYG8VdCiTuWyc7JDg4K3vYp9w1bWaueCpUb9mcj9Boi3emICur259HH77Rmdx8B3TYvbLrAjfk9C58LeNy1RiiBTLqTJJmYvqxnHNy2EiO2N1xS0CtCaSVBxjH2erldJZUlHhnSUCd/f1yHpD2L1F+hSGfihBb/3mSglIf3E3mTwzvZJ3cETPXuaJ9o+Tn5qHq19nT+n7laVQm5k6eQw3jklVCvnxB6mcHAxxyf8/7bDw7+stboPBNHJrZgWKTnlkZWV+4gV+Ilv9BCQ5+m11nHRNIOmbjqyxIJb0Vi9D4sRMWZLfdHZNggGN86W65bHpJlpz46EyvIsZF5HeyyY0U76uS2H5AP439MMY66SihOAYuOkN48epiI0PEKqZm3WFXZy/w46psWzk= shubhamtatvamasi@gmail.com"
+  public_key = file("~/.ssh/id_rsa.pub")
 }
 
-resource "aws_spot_instance_request" "ec2-spot-arm" {
-  # ami           = "ami-05eb7099cfe42bd06" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - ap-south-1
-  ami           = "ami-00a0488e9d5582804" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - us-west-1
-  instance_type = "t4g.xlarge"
-  spot_type     = "one-time"
-  key_name      = aws_key_pair.shubhamtatvamasi.key_name
-  # subnet_id     = "subnet-19056462"
-  # security_groups = ["sg-0b1fd5ccec31cb552", "sg-0525a9ccef62bba8d"]
+data "aws_vpc" "default" {
+  default = true
+} 
 
-  root_block_device {
-    volume_size = "100"
-    volume_type = "gp3"
-  }
+module "ssh_security_group" {
+  source  = "terraform-aws-modules/security-group/aws//modules/ssh"
+  version = "~> 4.0"
+
+  name = "ssh-security-group"
+  vpc_id = data.aws_vpc.default.id
+}
+
+module "ec2_instance" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 3.0"
+
+  name = "Spot Instance - Github Actions"
+
+  create_spot_instance = true
+  # spot_price           = "0.60"
+  # spot_type            = "persistent"
+
+  # ami                    = "ami-00a0488e9d5582804" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - us-west-1
+  ami           = "ami-0491e5015eb6e7a9b" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - ap-south-1
+  instance_type = "t4g.medium"
+  key_name      = aws_key_pair.shubhamtatvamasi.key_name
+  monitoring             = true
+  vpc_security_group_ids = [module.ssh_security_group.security_group_id]
+  # subnet_id              = "subnet-eddcdzz4"
+
+  root_block_device = [
+    {
+      volume_type = "gp3"
+      volume_size = 50
+    }
+  ]
 
   tags = {
-    Name = "ARM AGW 1"
+    Terraform   = "true"
+    Environment = "dev"
   }
 }
