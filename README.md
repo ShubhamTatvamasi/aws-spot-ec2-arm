@@ -29,3 +29,22 @@ network:
             set-name: eth1
     version: 2
 ```
+
+
+### terraform workspace
+
+List all workspaces:
+```bash
+terraform workspace list
+```
+
+Create new workspace:
+```bash
+terraform workspace new 2nd-vm
+```
+
+Apply changes:
+```bash
+terraform apply -auto-approve
+```
+
