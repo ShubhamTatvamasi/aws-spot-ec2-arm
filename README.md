@@ -1,8 +1,16 @@
 # terraform-aws-spot-ec2-arm
 
-Deploy Spot EC2 instance:
+Initalize terraform:
 ```bash
 terraform init
+```
+
+Deploy Spot EC2 instance:
+```bash
+export TF_VAR_attach_second_interface=false
+terraform apply -auto-approve
+
+export TF_VAR_attach_second_interface=true
 terraform apply -auto-approve
 ```
 
