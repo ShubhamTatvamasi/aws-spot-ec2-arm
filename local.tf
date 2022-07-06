@@ -6,6 +6,7 @@ locals {
   volume_size   = 100
 
   ami = "ami-00a0488e9d5582804" # Linux kernal 5.4.0-1017-aws - Ubuntu 20.04 LTS - us-west-1
+  # ami = "ami-014cfc34dcc548041" # Linux kernal 5.11.0-1019-aws - Ubuntu 20.04 LTS - us-west-1
   # ami = "ami-0491e5015eb6e7a9b" # Linux kernal 5.4.0-1009-aws - Ubuntu 20.04 LTS - ap-south-1
 
   tags = {
